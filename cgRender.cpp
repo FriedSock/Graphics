@@ -7,6 +7,8 @@ const GLfloat thing = 1.0f;
 
 struct point *points;
 
+int **polygons;
+
 void init() 
 {
   glClearColor (0.0, 0.0, 0.0, 0.0);
@@ -113,11 +115,39 @@ void load_points(const char *filename)
     }
 }
 
+void load_polygons(const char *filename){
+    ifstream in;
+    in.open(filename);
+    string s;
+
+    while (in >> s) {
+        if (s == "POLYGONS")
+            break;
+    }
+    
+    in >> s;
+    int no_of_polygons = atoi(s.c_str());
+    polygons = new int*[no_of_polygons];
+    in >> s;
+    
+    int i = 0;
+    while (in >> s) {
+        int size = atoi(s.c_str()); 
+        polygons[i] = new int[size];
+        for (int j = 0; j < size; j++) {
+            in >> s;
+            cout << s << endl;
+            polygons[i][j] = atoi(s.c_str());
+        }
+    }
+}
+
 int main(int argc, char** argv)
 {
   char *filename = argv[1];
   cout << filename << endl;
   load_points(filename);
+  load_polygons(filename);
   
   // Initialize graphics window
   glutInit(&argc, argv);
