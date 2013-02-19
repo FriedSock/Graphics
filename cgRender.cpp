@@ -5,6 +5,8 @@
 
 const GLfloat thing = 1.0f;
 
+struct point *points;
+
 void init() 
 {
   glClearColor (0.0, 0.0, 0.0, 0.0);
@@ -84,16 +86,31 @@ void load_points(const char *filename)
     ifstream in;
     in.open(filename);
     string s;
+    int no_of_points;
 
-    while (getline(in, s)){
-        stringstream line(s);
-        string firstword;
-        line >> firstword;
-        if (firstword == "POINTS")
+    while (in >> s) {
+        if (s == "POINTS") {
+            in >> s;
+            no_of_points = atoi(s.c_str());
+            in >> s;
+            cout << no_of_points << endl;
             break;
-        cout << firstword << endl;
+        }
     }
-    
+   
+    points = new point[no_of_points];
+    int i = 0;
+    while (in >> s) {
+        if (s == "POLYGONS")
+            break;
+        points[i].x = atof(s.c_str());
+        in >> s;
+        points[i].y = atof(s.c_str());
+        in >> s;
+        points[i].z = atof(s.c_str());
+        i++;
+        cout << i << endl;
+    }
 }
 
 int main(int argc, char** argv)
