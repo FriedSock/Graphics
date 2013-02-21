@@ -5,9 +5,12 @@
 
 const GLfloat thing = 1.0f;
 
+int no_of_points;
 struct point *points;
 
+int no_of_polygons;
 int **polygons;
+
 
 void init() 
 {
@@ -39,23 +42,25 @@ void display(void)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   cout << "display" << endl;
 
-  /*
-  for (all polygons)
+  
+  for (int i = 0; i < no_of_polygons; i++) {
     glBegin(GL_POLYGON);
-    for (all vertices of polygon)
+    for (int j = 0; j < 2; j++) {
       // Define texture coordinates of vertex
-      glTexCoord2f(...);
+      //glTexCoord2f(...);
       // Define normal of vertex
-      glNormal3f(...);
+      //glNormal3f(...);
       // Define coordinates of vertex
-      glVertex3f(...);
+      int vertex_index = polygons[i][j];
+      struct point vertex = points[vertex_index];
+      glVertex3f(vertex.x, vertex.y, vertex.z);
     }
     glEnd();
   }
   glFlush ();
   //  or, if double buffering is used,
   //  glutSwapBuffers();
-  */
+ 
 }
 
 void reshape (int w, int h)
@@ -88,14 +93,12 @@ void load_points(const char *filename)
     ifstream in;
     in.open(filename);
     string s;
-    int no_of_points;
 
     while (in >> s) {
         if (s == "POINTS") {
             in >> s;
             no_of_points = atoi(s.c_str());
             in >> s;
-            cout << no_of_points << endl;
             break;
         }
     }
@@ -111,7 +114,6 @@ void load_points(const char *filename)
         in >> s;
         points[i].z = atof(s.c_str());
         i++;
-        cout << i << endl;
     }
 }
 
@@ -126,19 +128,22 @@ void load_polygons(const char *filename){
     }
     
     in >> s;
-    int no_of_polygons = atoi(s.c_str());
+    no_of_polygons = atoi(s.c_str());
     polygons = new int*[no_of_polygons];
     in >> s;
     
     int i = 0;
     while (in >> s) {
-        int size = atoi(s.c_str()); 
+        if (s == "POINT_DATA")
+            break;
+
+        int size = atoi(s.c_str());
         polygons[i] = new int[size];
         for (int j = 0; j < size; j++) {
             in >> s;
-            cout << s << endl;
             polygons[i][j] = atoi(s.c_str());
         }
+        i++;
     }
 }
 
