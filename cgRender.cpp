@@ -15,6 +15,10 @@ vector<vector <float> > vertex_normals;
 int no_of_polygons;
 vector< vector <int> > polygons;
 
+int width;
+int height;
+unsigned char* texture;
+
 float rotate = 0.0f;
 
 float av_point[3];
@@ -140,15 +144,17 @@ void display(void)
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   cout << "display" << endl;
-
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, texture);
   for (int i = 0; i < no_of_polygons; i++) {
     glBegin(GL_POLYGON);
     for (int j = 0; j < polygons[i].size(); j++) {
-      // Define texture coordinates of vertex
-      vector<float> tex_point = texture_points[i];
-      glTexCoord2f(tex_point[0], tex_point[1]);
-      // Define normal of vertex
       int vertex_index = polygons[i][j];
+      // Define texture coordinates of vertex
+      vector<float> tex_point = texture_points[vertex_index];
+      glTexCoord2f(tex_point[0], tex_point[1]);
+      
       // Define normal
       vector<float> normal = vertex_normals[vertex_index];
       glNormal3f(normal[0], normal[1], normal[2]);
@@ -159,9 +165,9 @@ void display(void)
     }
     glEnd();
   }
-  glFlush ();
+  //glFlush ();
   //  or, if double buffering is used,
-  //  glutSwapBuffers();
+    glutSwapBuffers();
  
 }
 
@@ -265,8 +271,6 @@ void load_textures (const char *filename) {
             break;
     }
 
-
-    
     in >> s;
     in >> s;
     in >> s;
@@ -282,20 +286,39 @@ void load_textures (const char *filename) {
     }
 }
 
+void init_texture(char* filename) {
+
+    FILE* fp;
+    char line[70];
+    fp = fopen(filename, "rb");
+   
+    //Strip first line
+    fgets(line, 70, fp);
+   
+    fgets(line, 70, fp);
+    sscanf(line, "%d %d", &width, &height);
+    fgets(line, 70, fp);
+
+    texture = new unsigned char[width * height * 3];
+    fread(texture, sizeof (unsigned char), width * height * 3, fp);
+    fclose(fp);
+}
+
 int main(int argc, char** argv)
 {
   load_points("../data/face.vtk");
   load_polygons("../data/face.vtk");
   load_textures("../data/face.vtk");
+  init_texture("../data/face.ppm");
   averagePoint();
   calculate_vertex_normals();
   cout << "x: "<< av_point[0] << " y:" << av_point[1] << " z:" << av_point[2] << endl;
   
   // Initialize graphics window
   glutInit(&argc, argv);
-  glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH); 
+  //glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH); 
   //  Or, can use double buffering
-  //glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
+  glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
 
   glutInitWindowSize (256, 256); 
   glutInitWindowPosition (0, 0);
@@ -316,4 +339,5 @@ int main(int argc, char** argv)
 
 
 }
+
 
