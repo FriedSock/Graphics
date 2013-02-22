@@ -20,7 +20,7 @@ float rotate = 0.0f;
 float av_point[3];
 
 void averagePoint() {
-    av_point = {0, 0 ,0};
+    av_point[0] = 0; av_point[1] = 0; av_point[2] = 0;
     for(int i = 0; i < no_of_points; i++) {
         av_point[0] += points[i][0];
         av_point[1] += points[i][1];
