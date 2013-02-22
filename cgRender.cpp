@@ -105,28 +105,31 @@ void init()
   glEnable (GL_LIGHTING);
   glEnable (GL_LIGHT0);
 
-  GLfloat light_pos[] = {1.0, 1.0, 1.0, 0.0};
-  GLfloat light_ka[] = {0.2, 0.2, 0.2, 1.0};
+  GLfloat light_pos[] = {-3.0, 0, 1.0, 0.1};
+ //-0.25, -0.2, 0.8,
+
+
+  GLfloat light_ka[] = {0.8, 0.8, 0.8, 1.0};
   GLfloat light_kd[] = {1.0, 1.0, 1.0, 1.0};
   GLfloat light_ks[] = {1.0, 1.0, 1.0, 1.0};
 
   glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ka);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_kd);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light_ks);
+  //glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_kd);
+  //glLightfv(GL_LIGHT0, GL_SPECULAR, light_ks);
 
   //Initialise and set material parameters
-  GLfloat material_ka[] = {1.0, 1.0, 1.0, 1.0};
+  GLfloat material_ka[] = {0.3, 0.3, 0.3, 1.0};
   GLfloat material_kd[] = {0.43, 0.47, 0.54, 1.0};
-  GLfloat material_ks[] = {0.33, 0.33, 0.52, 1.0};
-  GLfloat material_ke[] = {0.0, 0.0, 0.0, 0.0};
-  GLfloat material_se[] = {10.0};
+  GLfloat material_ks[] = {0.33, 0.33, 0.33, 1.0};
+  GLfloat material_ke[] = {0.1, 0.1, 0.1, 0.1};
+  GLfloat material_se[] = {3.0};
 
-  //glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  material_ka);
-  //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  material_kd);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,  material_ks);
-  //glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION,  material_ke);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, material_se);
+  glMaterialfv(GL_FRONT, GL_AMBIENT,  material_ka);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE,  material_kd);
+  glMaterialfv(GL_FRONT, GL_SPECULAR,  material_ks);
+  glMaterialfv(GL_FRONT, GL_EMISSION,  material_ke);
+  glMaterialfv(GL_FRONT, GL_SHININESS, material_se);
 
   // Enable Z-buffering
   glEnable(GL_DEPTH_TEST);
@@ -170,11 +173,11 @@ void reshape (int w, int h)
   
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(10, 1, 0, -1);
+  gluPerspective(10, 1, 0, 10);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0, -0.25, 1.0,
-            0.1, -0.15, 0, 
+  gluLookAt(-0.3, -0.2, 1.0,
+            av_point[0], av_point[1], av_point[2], 
             0, 1.0, 0.0);
   
 }
