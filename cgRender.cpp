@@ -9,7 +9,7 @@ const GLfloat thing = 1.0f;
 
 int no_of_points;
 vector< vector<float> > points;
-
+vector< vector<float> > texture_points;
 vector<vector <float> > vertex_normals;
 
 int no_of_polygons;
@@ -145,13 +145,13 @@ void display(void)
     glBegin(GL_POLYGON);
     for (int j = 0; j < polygons[i].size(); j++) {
       // Define texture coordinates of vertex
-      glTexCoord2f(0, 1);
+      vector<float> tex_point = texture_points[i];
+      glTexCoord2f(tex_point[0], tex_point[1]);
       // Define normal of vertex
       int vertex_index = polygons[i][j];
       // Define normal
       vector<float> normal = vertex_normals[vertex_index];
       glNormal3f(normal[0], normal[1], normal[2]);
-      // cout << normal[0] << "" << normal[1] << "" << normal[2] << endl;
       
       // Define coordinates of vertex
       vector<float> vertex = points[vertex_index];
@@ -255,10 +255,38 @@ void load_polygons(const char *filename){
     }
 }
 
+void load_textures (const char *filename) {
+    ifstream in;
+    in.open(filename);
+    string s;
+
+    while (in >> s) {
+        if (s == "TEXTURE_COORDINATES")
+            break;
+    }
+
+
+    
+    in >> s;
+    in >> s;
+    in >> s;
+    
+    texture_points = vector< vector<float> >(no_of_points);
+    int i = 0;
+    while (in >> s) {
+        texture_points[i] = vector<float>(2);
+        texture_points[i][0] = atof(s.c_str());
+        in >> s;
+        texture_points[i][1] = atof(s.c_str());
+        i++;
+    }
+}
+
 int main(int argc, char** argv)
 {
   load_points("../data/face.vtk");
   load_polygons("../data/face.vtk");
+  load_textures("../data/face.vtk");
   averagePoint();
   calculate_vertex_normals();
   cout << "x: "<< av_point[0] << " y:" << av_point[1] << " z:" << av_point[2] << endl;
